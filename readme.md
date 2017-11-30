@@ -1,7 +1,7 @@
 # @nlib/content-type
 
 [![Build Status](https://travis-ci.org/nlibjs/content-type.svg?branch=master)](https://travis-ci.org/nlibjs/content-type)
-[![Build status](https://ci.appveyor.com/api/projects/status/6p7hcyrfn69dqv3m/branch/master?svg=true)](https://ci.appveyor.com/project/kei-ito/content-type/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/nlibjs/content-type?branch=mater&svg=true)](https://ci.appveyor.com/project/kei-ito/content-type/branch/master)
 [![codecov](https://codecov.io/gh/nlibjs/content-type/branch/master/graph/badge.svg)](https://codecov.io/gh/nlibjs/content-type)
 [![dependencies Status](https://david-dm.org/nlibjs/content-type/status.svg)](https://david-dm.org/nlibjs/content-type)
 [![devDependencies Status](https://david-dm.org/nlibjs/content-type/dev-status.svg)](https://david-dm.org/nlibjs/content-type?type=dev)
