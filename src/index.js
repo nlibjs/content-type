@@ -1,4 +1,4 @@
-class ContentType extends Map {
+module.exports = class ContentType extends Map {
 
 	static filterContentType(string) {
 		return string.split(/\s*;/).shift().trim().toLowerCase();
@@ -68,6 +68,4 @@ class ContentType extends Map {
 		return `.${extname}`;
 	}
 
-}
-
-module.exports = ContentType;
+};
