@@ -116,4 +116,4 @@ const ContentType = require('..');
 	assert.deepEqual(contentType.$get(newContentType), newExtensions);
 }
 
-console.log('done');
+console.log('passed: ContentType');
