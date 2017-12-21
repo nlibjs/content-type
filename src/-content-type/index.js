@@ -1,4 +1,4 @@
-module.exports = class ContentType extends Map {
+module.exports = class ContentType extends Array {
 
 	static filterContentType(string) {
 		return string.split(/\s*;/).shift().trim().toLowerCase();
@@ -9,34 +9,38 @@ module.exports = class ContentType extends Map {
 	}
 
 	constructor(arg) {
-		super([
+		super();
+		const defaults = [
 			['text/html', ['html', 'htm']],
-			['text/css', ['css']],
 			['application/javascript', ['js']],
+			['text/css', ['css']],
 			['application/json', ['json']],
 			['image/jpeg', ['jpg', 'jpeg']],
 			['image/png', ['png']],
 			['image/gif', ['gif']],
 			['image/svg+xml', ['svg']],
 			['image/vnd.microsoft.icon', ['ico']],
-			['application/x-font-ttf', ['ttf']],
-			['application/x-font-otf', ['otf']],
 			['application/font-woff', ['woff']],
+			['application/x-font-otf', ['otf']],
+			['application/x-font-ttf', ['ttf']],
 			['application/pdf', ['pdf']],
 			['application/zip', ['zip']],
 			['video/webm', ['webm']],
 			['video/mpeg', ['mpg', 'mpeg']],
 			['video/mp4', ['mp4']],
-			['audio/ogg', ['ogg']],
-			['audio/wav', ['wav']],
 			['audio/mpeg', ['mp3']],
+			['audio/wav', ['wav']],
+			['audio/ogg', ['ogg']],
 			['audio/aac', ['m4a']],
 			['audio/midi', ['midi']],
-		]);
+		];
+		for (let i = defaults.length; i--;) {
+			this.set(...defaults[i]);
+		}
 		if (arg) {
 			if (arg[Symbol.iterator]) {
-				for (const [type, extnames] of arg) {
-					this.set(type, extnames);
+				for (const entry of arg) {
+					this.set(...entry);
 				}
 			} else {
 				for (const type of Object.keys(arg)) {
@@ -47,11 +51,24 @@ module.exports = class ContentType extends Map {
 		this.setDefault('text/plain', ['txt', 'dat', 'log']);
 	}
 
+	get default() {
+		return [this.defaultContentType, [this.defaultExtname]];
+	}
+
 	set(contentType, extnameList) {
-		super.set(
-			ContentType.filterContentType(contentType),
-			extnameList.map(ContentType.filterExtname)
-		);
+		contentType = ContentType.filterContentType(contentType);
+		extnameList = Array.from(extnameList).map(ContentType.filterExtname);
+		for (const extname of extnameList) {
+			const index = this.findIndex(([, extnames]) => extnames.includes(extname));
+			if (0 <= index) {
+				const [, exts] = this[index];
+				exts.splice(exts.indexOf(extname), 1);
+				if (exts.length === 0) {
+					this.splice(index, 1);
+				}
+			}
+		}
+		this.unshift([contentType, extnameList]);
 	}
 
 	setDefault(contentType, extnameList) {
@@ -67,16 +84,12 @@ module.exports = class ContentType extends Map {
 				return contentType;
 			}
 		}
-		return this.defaultContentType;
-	}
-
-	$get(...args) {
-		return super.get(...args);
+		return this.default[0];
 	}
 
 	getExtname(contentType) {
 		contentType = ContentType.filterContentType(contentType);
-		const extname = this.has(contentType) ? super.get(contentType)[0] : this.defaultExtname;
+		const [, [extname]] = this.find(([type]) => type === contentType) || this.default;
 		return `.${extname}`;
 	}
 

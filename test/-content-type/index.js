@@ -85,17 +85,18 @@ test('ContentType', (test) => {
 
 	test('ContentType.prototype.set', (test) => {
 
+		const newContentType = `type/${Date.now()}`;
+		const newExtensions = [`${Date.now()}`, 'html', 'jpg'];
+
 		test('constructor: array', (test) => {
-			const newContentType = `type/${Date.now()}`;
-			const newExtensions = [`${Date.now()}`, `${Date.now() + 1}`];
 			const contentType = new ContentType([
 				[newContentType, newExtensions],
 			]);
-			test('get', () => {
-				const actual = contentType.get(`foo/bar.${newExtensions[0]}`);
-				const expected = newContentType;
-				assert.equal(actual, expected);
-			});
+			for (const extname of newExtensions) {
+				test(`get("foo/bar.${extname}") → ${newContentType}`, () => {
+					assert.equal(contentType.get(`foo/bar.${extname}`), newContentType);
+				});
+			}
 			test('getExtname', () => {
 				const actual = contentType.getExtname(newContentType);
 				const expected = `.${newExtensions[0]}`;
@@ -104,16 +105,14 @@ test('ContentType', (test) => {
 		});
 
 		test('constructor: object', (test) => {
-			const newContentType = `type/${Date.now()}`;
-			const newExtensions = [`${Date.now()}`, `${Date.now() + 1}`];
 			const contentType = new ContentType({
 				[newContentType]: newExtensions,
 			});
-			test('get', () => {
-				const actual = contentType.get(`foo/bar.${newExtensions[0]}`);
-				const expected = newContentType;
-				assert.equal(actual, expected);
-			});
+			for (const extname of newExtensions) {
+				test(`get("foo/bar.${extname}") → ${newContentType}`, () => {
+					assert.equal(contentType.get(`foo/bar.${extname}`), newContentType);
+				});
+			}
 			test('getExtname', () => {
 				const actual = contentType.getExtname(newContentType);
 				const expected = `.${newExtensions[0]}`;
@@ -123,19 +122,25 @@ test('ContentType', (test) => {
 
 		test('method', (test) => {
 			const contentType = new ContentType();
-			const newContentType = `type/${Date.now()}`;
-			const newExtensions = [`${Date.now()}`, `${Date.now() + 1}`];
 			contentType.set(newContentType, newExtensions);
-			test('get', () => {
-				const actual = contentType.get(`foo/bar.${newExtensions[0]}`);
-				const expected = newContentType;
-				assert.equal(actual, expected);
-			});
+			for (const extname of newExtensions) {
+				test(`get("foo/bar.${extname}") → ${newContentType}`, () => {
+					assert.equal(contentType.get(`foo/bar.${extname}`), newContentType);
+				});
+			}
 			test('getExtname', () => {
 				const actual = contentType.getExtname(newContentType);
 				const expected = `.${newExtensions[0]}`;
 				assert.equal(actual, expected);
 			});
+		});
+
+		test('delete resolver', () => {
+			const contentType = new ContentType();
+			contentType.set(newContentType, newExtensions);
+			const currentLength = contentType.length;
+			contentType.set(`${newContentType}-new`, newExtensions);
+			assert.equal(contentType.length, currentLength);
 		});
 
 	});
@@ -167,8 +172,7 @@ test('ContentType', (test) => {
 				return `/foo.bar/baz.baz.${extension}`;
 			})
 		);
-		assert(contentType.has(newContentType));
-		assert.deepEqual(contentType.$get(newContentType), newExtensions);
+		assert.deepEqual(contentType[0], [newContentType, newExtensions]);
 	});
 
 });
