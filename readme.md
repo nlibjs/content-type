@@ -17,7 +17,7 @@ npm install @nlib/content-type
 ## Usage
 
 ```javascript
-const ContentType = require('@nlib/content-type');
+const {ContentType} = require('@nlib/content-type');
 const contentType = new ContentType();
 
 // return a content-type
